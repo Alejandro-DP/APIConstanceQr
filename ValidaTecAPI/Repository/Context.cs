@@ -8,14 +8,21 @@ namespace ValidaTecAPI.Repository
         public Context(DbContextOptions options) : base(options)
         {
         }
+
+     
+
+        protected override void OnModelCreating(ModelBuilder modelBuilder)
+        {
+            //model.Entity<User>().HasKey(x => new {x.UserId});
+            //model.Entity<User>().HasOne(o => o.UserRole).WithOne().HasForeignKey<User>(o => o.UserId);
+            //llaves primarias y relationship 
+
+            modelBuilder.ApplyConfiguration(new CourseConfiguration());
+
+        }
         public DbSet<Role> Roles { get; set; }
         public DbSet<User> Users { get; set; }
-
-        protected override void OnModelCreating(ModelBuilder model)
-        {
-            model.Entity<User>().HasKey(x => new {x.UserId});
-            model.Entity<User>().HasOne(o => o.UserRole).WithOne().HasForeignKey<User>(o => o.UserId);
-        }
+        public DbSet<Courses> Courses { get; set; }
     }
   
 }

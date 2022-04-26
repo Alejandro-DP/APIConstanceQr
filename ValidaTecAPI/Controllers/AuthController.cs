@@ -33,6 +33,21 @@ namespace ValidaTecAPI.Controllers
             else
                 return BadRequest("Password is not valid");
         }
+        [HttpPost("register")]
+        public async Task<ActionResult<LoginCTDO>> CreateNewUser(UserDTO user)
+        {
+            var userExists = await context.Users.AnyAsync(u => u.Email == user.Email);
+            if (userExists)
+                return BadRequest("User already exists");
+            var userCDTO = mapper.Map<User>(user);
+
+            userCDTO.RoleId = 2;
+            userCDTO.Password = BCrypt.Net.BCrypt.HashPassword(userCDTO.Password);
+            context.Users.Add(userCDTO);
+            await context.SaveChangesAsync();
+            var newUser = await context.Users.Include(u => u.UserRole).FirstOrDefaultAsync(u => u.Email == user.Email);
+            return Ok(new LoginCTDO() { isLogged = true, Role = newUser.UserRole.Description, UserId = newUser.UserId });
+        }
         [HttpGet("Usuarios")]
         public async Task<ActionResult<IEnumerable<User>>> GetUsers()
         {

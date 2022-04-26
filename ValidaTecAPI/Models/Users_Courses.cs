@@ -3,18 +3,17 @@ using System.ComponentModel.DataAnnotations.Schema;
 
 namespace ValidaTecAPI.Models
 {
-    public class User
+    public class Users_Courses
     {
         [Key]
         [DatabaseGenerated(DatabaseGeneratedOption.Identity)]
-        public int UserId { get; set; }
-        public string Name { get; set; }
-        public string LastName { get; set; }
-        public string Email { get; set; }
-        public string Password { get; set; }
-
+        public int Id { get; set; }
         [Required]
-        public int RoleId { get; set; }
-        public Role UserRole { get; set; }
+        public int UserId { get; set; }
+        [Required]
+        public int CouseId { get; set; }
+        
+        public string Qualification { get; set; }
+
     }
 }
