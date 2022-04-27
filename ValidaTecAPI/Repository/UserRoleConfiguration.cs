@@ -15,6 +15,9 @@ namespace ValidaTecAPI.Repository
             //builder.HasOne(typeof(User)).WithMany().OnDelete(DeleteBehavior.Restrict);
 
             //builder.HasOne(typeof(Role)).WithMany().OnDelete(DeleteBehavior.Restrict);
+
+            builder.HasIndex(o => o.CarrerId).HasDatabaseName("UI_Carrer_User");
+            builder.HasMany(typeof(Carrer)).WithOne().OnDelete(DeleteBehavior.Restrict);
         }
     }
 }

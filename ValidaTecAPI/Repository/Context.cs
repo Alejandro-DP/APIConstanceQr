@@ -27,8 +27,7 @@ namespace ValidaTecAPI.Repository
         public virtual DbSet<User> Users { get; set; }
         public virtual DbSet<Courses> Courses { get; set; }
         public virtual DbSet<Users_Courses> Users_Courses { get; set; }
-        
-
+        public virtual DbSet<Carrer> Carrers { get; set; }
       
     }
   
