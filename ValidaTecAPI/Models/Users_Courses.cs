@@ -9,9 +9,9 @@ namespace ValidaTecAPI.Models
         [DatabaseGenerated(DatabaseGeneratedOption.Identity)]
         public int Id { get; set; }
         [Required]
-        public int UserId { get; set; }
+        public int UserId { get; set; }//indice y Fk
         [Required]
-        public int CouseId { get; set; }
+        public int CourseId { get; set; } // indeice y Fk
         
         public string Qualification { get; set; }
 

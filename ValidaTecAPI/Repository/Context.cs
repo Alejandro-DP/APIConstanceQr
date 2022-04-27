@@ -18,11 +18,18 @@ namespace ValidaTecAPI.Repository
             //llaves primarias y relationship 
 
             modelBuilder.ApplyConfiguration(new CourseConfiguration());
+            modelBuilder.ApplyConfiguration(new UserCourseConfiguration());
+            modelBuilder.ApplyConfiguration(new UserRoleConfiguration());
+            
 
         }
-        public DbSet<Role> Roles { get; set; }
-        public DbSet<User> Users { get; set; }
-        public DbSet<Courses> Courses { get; set; }
+        public virtual DbSet<Role> Roles { get; set; }
+        public virtual DbSet<User> Users { get; set; }
+        public virtual DbSet<Courses> Courses { get; set; }
+        public virtual DbSet<Users_Courses> Users_Courses { get; set; }
+        
+
+      
     }
   
 }

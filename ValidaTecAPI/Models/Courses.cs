@@ -14,8 +14,8 @@ namespace ValidaTecAPI.Models
         public int Duration { get; set; }
         public string Catedratic { get; set; }
         public string Status { get; set; }
-
-        public int UserId { get; set; } // crear indice
         [Required]
+        public int UserId { get; set; } // crear indice
+       
     }
 }
