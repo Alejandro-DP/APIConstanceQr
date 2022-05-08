@@ -12,8 +12,8 @@ using ValidaTecAPI.Repository;
 namespace ValidaTecAPI.Migrations
 {
     [DbContext(typeof(Context))]
-    [Migration("20220427233213_four")]
-    partial class four
+    [Migration("20220428003750_eleven")]
+    partial class eleven
     {
         protected override void BuildTargetModel(ModelBuilder modelBuilder)
         {
@@ -32,9 +32,6 @@ namespace ValidaTecAPI.Migrations
 
                     SqlServerPropertyBuilderExtensions.UseIdentityColumn(b.Property<int>("Id"), 1L, 1);
 
-                    b.Property<int?>("CoursesId")
-                        .HasColumnType("int");
-
                     b.Property<string>("Name")
                         .IsRequired()
                         .HasColumnType("nvarchar(max)");
@@ -43,8 +40,6 @@ namespace ValidaTecAPI.Migrations
                         .HasColumnType("int");
 
                     b.HasKey("Id");
-
-                    b.HasIndex("CoursesId");
 
                     b.HasIndex("UserId");
 
@@ -95,9 +90,6 @@ namespace ValidaTecAPI.Migrations
                     b.HasIndex("CarrerId")
                         .HasDatabaseName("IU_Carrer_Course");
 
-                    b.HasIndex("UserId")
-                        .HasDatabaseName("IU_confUsuario");
-
                     b.ToTable("Courses");
                 });
 
@@ -113,12 +105,7 @@ namespace ValidaTecAPI.Migrations
                         .IsRequired()
                         .HasColumnType("nvarchar(max)");
 
-                    b.Property<int?>("UserId")
-                        .HasColumnType("int");
-
                     b.HasKey("RoleId");
-
-                    b.HasIndex("UserId");
 
                     b.ToTable("Roles");
                 });
@@ -158,7 +145,9 @@ namespace ValidaTecAPI.Migrations
                     b.HasIndex("CarrerId")
                         .HasDatabaseName("UI_Carrer_User");
 
-                    b.HasIndex("RoleId")
+                    b.HasIndex("RoleId");
+
+                    b.HasIndex("UserId")
                         .HasDatabaseName("UI_Usuario");
 
                     b.ToTable("Users");
@@ -200,11 +189,6 @@ namespace ValidaTecAPI.Migrations
 
             modelBuilder.Entity("ValidaTecAPI.Models.Carrer", b =>
                 {
-                    b.HasOne("ValidaTecAPI.Models.Courses", null)
-                        .WithMany()
-                        .HasForeignKey("CoursesId")
-                        .OnDelete(DeleteBehavior.Restrict);
-
                     b.HasOne("ValidaTecAPI.Models.User", null)
                         .WithMany()
                         .HasForeignKey("UserId")
@@ -213,19 +197,11 @@ namespace ValidaTecAPI.Migrations
 
             modelBuilder.Entity("ValidaTecAPI.Models.Courses", b =>
                 {
-                    b.HasOne("ValidaTecAPI.Models.User", null)
+                    b.HasOne("ValidaTecAPI.Models.Carrer", null)
                         .WithMany()
-                        .HasForeignKey("UserId")
+                        .HasForeignKey("CarrerId")
                         .OnDelete(DeleteBehavior.Restrict)
                         .IsRequired();
-                });
-
-            modelBuilder.Entity("ValidaTecAPI.Models.Role", b =>
-                {
-                    b.HasOne("ValidaTecAPI.Models.User", null)
-                        .WithMany()
-                        .HasForeignKey("UserId")
-                        .OnDelete(DeleteBehavior.Restrict);
                 });
 
             modelBuilder.Entity("ValidaTecAPI.Models.User", b =>

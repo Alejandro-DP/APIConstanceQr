@@ -17,7 +17,7 @@ namespace ValidaTecAPI.Migrations
         {
 #pragma warning disable 612, 618
             modelBuilder
-                .HasAnnotation("ProductVersion", "6.0.3")
+                .HasAnnotation("ProductVersion", "6.0.4")
                 .HasAnnotation("Relational:MaxIdentifierLength", 128);
 
             SqlServerModelBuilderExtensions.UseIdentityColumns(modelBuilder, 1L, 1);
@@ -30,21 +30,11 @@ namespace ValidaTecAPI.Migrations
 
                     SqlServerPropertyBuilderExtensions.UseIdentityColumn(b.Property<int>("Id"), 1L, 1);
 
-                    b.Property<int?>("CoursesId")
-                        .HasColumnType("int");
-
                     b.Property<string>("Name")
                         .IsRequired()
                         .HasColumnType("nvarchar(max)");
 
-                    b.Property<int?>("UserId")
-                        .HasColumnType("int");
-
                     b.HasKey("Id");
-
-                    b.HasIndex("CoursesId");
-
-                    b.HasIndex("UserId");
 
                     b.ToTable("Carrers");
                 });
@@ -93,9 +83,6 @@ namespace ValidaTecAPI.Migrations
                     b.HasIndex("CarrerId")
                         .HasDatabaseName("IU_Carrer_Course");
 
-                    b.HasIndex("UserId")
-                        .HasDatabaseName("IU_confUsuario");
-
                     b.ToTable("Courses");
                 });
 
@@ -111,12 +98,7 @@ namespace ValidaTecAPI.Migrations
                         .IsRequired()
                         .HasColumnType("nvarchar(max)");
 
-                    b.Property<int?>("UserId")
-                        .HasColumnType("int");
-
                     b.HasKey("RoleId");
-
-                    b.HasIndex("UserId");
 
                     b.ToTable("Roles");
                 });
@@ -156,7 +138,9 @@ namespace ValidaTecAPI.Migrations
                     b.HasIndex("CarrerId")
                         .HasDatabaseName("UI_Carrer_User");
 
-                    b.HasIndex("RoleId")
+                    b.HasIndex("RoleId");
+
+                    b.HasIndex("UserId")
                         .HasDatabaseName("UI_Usuario");
 
                     b.ToTable("Users");
@@ -196,34 +180,13 @@ namespace ValidaTecAPI.Migrations
                     b.ToTable("Users_Courses");
                 });
 
-            modelBuilder.Entity("ValidaTecAPI.Models.Carrer", b =>
-                {
-                    b.HasOne("ValidaTecAPI.Models.Courses", null)
-                        .WithMany()
-                        .HasForeignKey("CoursesId")
-                        .OnDelete(DeleteBehavior.Restrict);
-
-                    b.HasOne("ValidaTecAPI.Models.User", null)
-                        .WithMany()
-                        .HasForeignKey("UserId")
-                        .OnDelete(DeleteBehavior.Restrict);
-                });
-
             modelBuilder.Entity("ValidaTecAPI.Models.Courses", b =>
                 {
-                    b.HasOne("ValidaTecAPI.Models.User", null)
+                    b.HasOne("ValidaTecAPI.Models.Carrer", null)
                         .WithMany()
-                        .HasForeignKey("UserId")
+                        .HasForeignKey("CarrerId")
                         .OnDelete(DeleteBehavior.Restrict)
                         .IsRequired();
-                });
-
-            modelBuilder.Entity("ValidaTecAPI.Models.Role", b =>
-                {
-                    b.HasOne("ValidaTecAPI.Models.User", null)
-                        .WithMany()
-                        .HasForeignKey("UserId")
-                        .OnDelete(DeleteBehavior.Restrict);
                 });
 
             modelBuilder.Entity("ValidaTecAPI.Models.User", b =>

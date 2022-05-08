@@ -13,9 +13,12 @@ namespace ValidaTecAPI.Models
         public string Email { get; set; }
         public string Password { get; set; }
 
-        [Required]
+        
         public int RoleId { get; set; } //indice
         public int CarrerId { get; set; }
         public Role UserRole { get; set; }
+        
     }
+
+   
 }

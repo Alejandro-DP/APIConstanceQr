@@ -2,6 +2,10 @@
 using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.EntityFrameworkCore;
+using Microsoft.IdentityModel.Tokens;
+using System.IdentityModel.Tokens.Jwt;
+using System.Security.Claims;
+using System.Text;
 using ValidaTecAPI.DTO;
 using ValidaTecAPI.Models;
 using ValidaTecAPI.Repository;
@@ -15,44 +19,116 @@ namespace ValidaTecAPI.Controllers
     {
         private readonly Context context;
         private readonly IMapper mapper;
-        public AuthController(Context context, IMapper mapper)
+        public IConfiguration _Configuration;
+        public AuthController(Context context, IMapper mapper, IConfiguration configuration)
         {
             this.context = context;
             this.mapper = mapper;
+            _Configuration = configuration;
         }
-         [HttpPost("login")]
-        public async Task<ActionResult<LoginCTDO>> UserLogin(Login login)
+        [HttpPost("login")]
+        public async Task<ActionResult<LoginCTDO>> UserLogin(Login user)
         {
-            var user = await context.Users.Include(x => x.UserRole).FirstOrDefaultAsync(u => u.Email == login.Email);
-            if (user == null)
+            var login = await context.Users.Include(x => x.UserRole).FirstOrDefaultAsync(u => u.Email == user.Email);
+            if (login == null)
                 return NotFound();
-            var isValidPassword = BCrypt.Net.BCrypt.Verify(login.Password, user.Password);
-            if (isValidPassword)
-                return Ok(new LoginCTDO() { isLogged = true, Role = user.UserRole.Description, UserId = user.UserId });
+            var isValidPassword = await context.Users.Include(u => u.UserRole).FirstOrDefaultAsync(x => x.Password == user.Password);/*BCrypt.Net.BCrypt.Verify(login.Password, user.Password);*/
+            if (isValidPassword == null)
 
+                return BadRequest("crendenciales Incorrectas");
             else
-                return BadRequest("Password is not valid");
-        }
-        [HttpPost("register")]
-        public async Task<ActionResult<LoginCTDO>> CreateNewUser(UserDTO user)
-        {
-            var userExists = await context.Users.AnyAsync(u => u.Email == user.Email);
-            if (userExists)
-                return BadRequest("User already exists");
-            var userCDTO = mapper.Map<User>(user);
+            {
+                var userData = await GetUsers(user.Email, user.Password);
+                var jwt = _Configuration.GetSection("Jwt").Get<Jwt>();
+               
+                    var claims = new[]
+                    {
+                        new Claim(JwtRegisteredClaimNames.Sub, jwt.Subject),
+                        new Claim(JwtRegisteredClaimNames.Jti, Guid.NewGuid().ToString()),
+                        new Claim(JwtRegisteredClaimNames.Iat, jwt.Subject),
 
-            userCDTO.RoleId = 2;
-            userCDTO.Password = BCrypt.Net.BCrypt.HashPassword(userCDTO.Password);
-            context.Users.Add(userCDTO);
-            await context.SaveChangesAsync();
-            var newUser = await context.Users.Include(u => u.UserRole).FirstOrDefaultAsync(u => u.Email == user.Email);
-            return Ok(new LoginCTDO() { isLogged = true, Role = newUser.UserRole.Description, UserId = newUser.UserId });
+                        new Claim("Email", user.Email),
+                        new Claim("Password", user.Password),
+
+                    };
+                    var key = new SymmetricSecurityKey(Encoding.UTF8.GetBytes(jwt.Key));
+                    var singIn = new SigningCredentials(key, SecurityAlgorithms.HmacSha256);
+                    var tokens = new JwtSecurityToken
+                             (
+                              jwt.Issuer,
+                              jwt.Audience,
+                              claims,
+                              expires: DateTime.Now.AddMinutes(20),
+                              signingCredentials: singIn
+                             );
+                var token = new JwtSecurityTokenHandler().WriteToken(tokens);
+                    //return Ok(new JwtSecurityTokenHandler().WriteToken(token));
+                    
+                return Ok(new LoginCTDO() { isLogged = true,UserName = login.LastName + " " + (login.Name), Role = login.UserRole.Description, Token = token} );
+            }
         }
+           
+           
+        
         [HttpGet("Usuarios")]
-        public async Task<ActionResult<IEnumerable<User>>> GetUsers()
+        public async Task<User> GetUsers(string email, string password)
         {
-            return await context.Users.Include(u => u.UserRole).ToListAsync();
 
+            return await context.Users.FirstOrDefaultAsync(u => u.Email == email && u.Password == password);
         }
     }
 }
+
+
+
+
+
+//var login = await context.Users.Include(x => x.UserRole).FirstOrDefaultAsync(u => u.Email == user.Email);
+//if (login == null)
+//    return NotFound();
+//var isValidPassword = BCrypt.Net.BCrypt.Verify(login.Password, user.Password);
+//if (isValidPassword)
+//    return Ok(new LoginCTDO() { isLogged = true, Role = login.UserRole.Description, UserId = login.UserId });
+
+//else
+//{
+
+//}
+
+//var userData = await GetUsers(user.Email, user.Password);
+//var jwt = _Configuration.GetSection("Jwt").Get<Jwt>();
+//if (user != null)
+//{
+//    var claims = new[]
+//    {
+//                        new Claim(JwtRegisteredClaimNames.Sub, jwt.Subject),
+//                        new Claim(JwtRegisteredClaimNames.Jti, Guid.NewGuid().ToString()),
+//                        new Claim(JwtRegisteredClaimNames.Iat, jwt.Subject),
+
+//                        new Claim("Email", user.Email),
+//                        new Claim("Password", user.Password),
+
+//                    };
+//    var key = new SymmetricSecurityKey(Encoding.UTF8.GetBytes(jwt.Key));
+//    var singIn = new SigningCredentials(key, SecurityAlgorithms.HmacSha256);
+//    var token = new JwtSecurityToken
+//             (
+//              jwt.Issuer,
+//              jwt.Audience,
+//              claims,
+//              expires: DateTime.Now.AddMinutes(20),
+//              signingCredentials: singIn
+//             );
+
+//    return Ok(new JwtSecurityTokenHandler().WriteToken(token));
+//}
+//else
+//{
+//    return BadRequest("Credenciales Invalidas");
+//}
+
+//            }
+//            else
+//{
+//    return BadRequest("Credenciales Invalidas x2");
+//}

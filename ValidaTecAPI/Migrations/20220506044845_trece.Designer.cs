@@ -12,17 +12,34 @@ using ValidaTecAPI.Repository;
 namespace ValidaTecAPI.Migrations
 {
     [DbContext(typeof(Context))]
-    [Migration("20220427000856_second")]
-    partial class second
+    [Migration("20220506044845_trece")]
+    partial class trece
     {
         protected override void BuildTargetModel(ModelBuilder modelBuilder)
         {
 #pragma warning disable 612, 618
             modelBuilder
-                .HasAnnotation("ProductVersion", "6.0.3")
+                .HasAnnotation("ProductVersion", "6.0.4")
                 .HasAnnotation("Relational:MaxIdentifierLength", 128);
 
             SqlServerModelBuilderExtensions.UseIdentityColumns(modelBuilder, 1L, 1);
+
+            modelBuilder.Entity("ValidaTecAPI.Models.Carrer", b =>
+                {
+                    b.Property<int>("Id")
+                        .ValueGeneratedOnAdd()
+                        .HasColumnType("int");
+
+                    SqlServerPropertyBuilderExtensions.UseIdentityColumn(b.Property<int>("Id"), 1L, 1);
+
+                    b.Property<string>("Name")
+                        .IsRequired()
+                        .HasColumnType("nvarchar(max)");
+
+                    b.HasKey("Id");
+
+                    b.ToTable("Carrers");
+                });
 
             modelBuilder.Entity("ValidaTecAPI.Models.Courses", b =>
                 {
@@ -31,6 +48,9 @@ namespace ValidaTecAPI.Migrations
                         .HasColumnType("int");
 
                     SqlServerPropertyBuilderExtensions.UseIdentityColumn(b.Property<int>("Id"), 1L, 1);
+
+                    b.Property<int>("CarrerId")
+                        .HasColumnType("int");
 
                     b.Property<string>("Catedratic")
                         .IsRequired()
@@ -45,6 +65,10 @@ namespace ValidaTecAPI.Migrations
                     b.Property<int>("Duration")
                         .HasColumnType("int");
 
+                    b.Property<string>("Folio")
+                        .IsRequired()
+                        .HasColumnType("nvarchar(max)");
+
                     b.Property<string>("NameCourse")
                         .IsRequired()
                         .HasColumnType("nvarchar(max)");
@@ -58,8 +82,8 @@ namespace ValidaTecAPI.Migrations
 
                     b.HasKey("Id");
 
-                    b.HasIndex("UserId")
-                        .HasDatabaseName("IU_confUsuario");
+                    b.HasIndex("CarrerId")
+                        .HasDatabaseName("IU_Carrer_Course");
 
                     b.ToTable("Courses");
                 });
@@ -76,12 +100,7 @@ namespace ValidaTecAPI.Migrations
                         .IsRequired()
                         .HasColumnType("nvarchar(max)");
 
-                    b.Property<int?>("UserId")
-                        .HasColumnType("int");
-
                     b.HasKey("RoleId");
-
-                    b.HasIndex("UserId");
 
                     b.ToTable("Roles");
                 });
@@ -93,6 +112,9 @@ namespace ValidaTecAPI.Migrations
                         .HasColumnType("int");
 
                     SqlServerPropertyBuilderExtensions.UseIdentityColumn(b.Property<int>("UserId"), 1L, 1);
+
+                    b.Property<int>("CarrerId")
+                        .HasColumnType("int");
 
                     b.Property<string>("Email")
                         .IsRequired()
@@ -115,7 +137,12 @@ namespace ValidaTecAPI.Migrations
 
                     b.HasKey("UserId");
 
-                    b.HasIndex("RoleId")
+                    b.HasIndex("CarrerId")
+                        .HasDatabaseName("UI_Carrer_User");
+
+                    b.HasIndex("RoleId");
+
+                    b.HasIndex("UserId")
                         .HasDatabaseName("UI_Usuario");
 
                     b.ToTable("Users");
@@ -157,19 +184,11 @@ namespace ValidaTecAPI.Migrations
 
             modelBuilder.Entity("ValidaTecAPI.Models.Courses", b =>
                 {
-                    b.HasOne("ValidaTecAPI.Models.User", null)
+                    b.HasOne("ValidaTecAPI.Models.Carrer", null)
                         .WithMany()
-                        .HasForeignKey("UserId")
+                        .HasForeignKey("CarrerId")
                         .OnDelete(DeleteBehavior.Restrict)
                         .IsRequired();
-                });
-
-            modelBuilder.Entity("ValidaTecAPI.Models.Role", b =>
-                {
-                    b.HasOne("ValidaTecAPI.Models.User", null)
-                        .WithMany()
-                        .HasForeignKey("UserId")
-                        .OnDelete(DeleteBehavior.Restrict);
                 });
 
             modelBuilder.Entity("ValidaTecAPI.Models.User", b =>

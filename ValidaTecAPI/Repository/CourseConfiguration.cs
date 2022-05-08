@@ -8,10 +8,9 @@ namespace ValidaTecAPI.Repository
     {
         public void Configure(EntityTypeBuilder<Courses> builder)//indices 
         {
-            builder.HasIndex(e => e.UserId).HasDatabaseName("IU_confUsuario");
-            builder.HasOne(typeof(User)).WithMany().OnDelete(DeleteBehavior.Restrict);
+           
             builder.HasIndex(e => e.CarrerId).HasDatabaseName("IU_Carrer_Course");
-            builder.HasMany(typeof(Carrer)).WithOne().OnDelete(DeleteBehavior.Restrict);
+            builder.HasOne(typeof(Carrer)).WithMany().OnDelete(DeleteBehavior.Restrict);
         }
     }
 }
