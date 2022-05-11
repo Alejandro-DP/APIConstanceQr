@@ -29,10 +29,10 @@ namespace ValidaTecAPI.Controllers
         [HttpPost("login")]
         public async Task<ActionResult<LoginCTDO>> UserLogin(Login user)
         {
-            var login = await context.Users.Include(x => x.UserRole).FirstOrDefaultAsync(u => u.Email == user.Email);
+            var login = await context.Users.Include(x => x.UserRole).FirstOrDefaultAsync(u => u.Email == user.email);
             if (login == null)
                 return NotFound();
-            var isValidPassword = await context.Users.Include(u => u.UserRole).FirstOrDefaultAsync(x => x.Password == user.Password);/*BCrypt.Net.BCrypt.Verify(login.Password, user.Password);*/
+            var isValidPassword = await context.Users.Include(u => u.UserRole).FirstOrDefaultAsync(x => x.Password == user.password);/*BCrypt.Net.BCrypt.Verify(login.Password, user.Password);*/
             if (isValidPassword == null)
 
                 return BadRequest("usuario o contraseña incorrectas");
