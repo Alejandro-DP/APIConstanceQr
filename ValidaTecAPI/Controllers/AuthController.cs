@@ -35,10 +35,10 @@ namespace ValidaTecAPI.Controllers
             var isValidPassword = await context.Users.Include(u => u.UserRole).FirstOrDefaultAsync(x => x.Password == user.Password);/*BCrypt.Net.BCrypt.Verify(login.Password, user.Password);*/
             if (isValidPassword == null)
 
-                return BadRequest("crendenciales Incorrectas");
+                return BadRequest("usuario o contraseña incorrectas");
             else
             {
-                var userData = await GetUsers(user.Email, user.Password);
+                var userData = await GetUsers(user.email, user.password);
                 var jwt = _Configuration.GetSection("Jwt").Get<Jwt>();
                
                     var claims = new[]
@@ -47,8 +47,8 @@ namespace ValidaTecAPI.Controllers
                         new Claim(JwtRegisteredClaimNames.Jti, Guid.NewGuid().ToString()),
                         new Claim(JwtRegisteredClaimNames.Iat, jwt.Subject),
 
-                        new Claim("Email", user.Email),
-                        new Claim("Password", user.Password),
+                        new Claim("email", user.email),
+                        new Claim("password", user.password),
 
                     };
                     var key = new SymmetricSecurityKey(Encoding.UTF8.GetBytes(jwt.Key));
@@ -64,7 +64,7 @@ namespace ValidaTecAPI.Controllers
                 var token = new JwtSecurityTokenHandler().WriteToken(tokens);
                     //return Ok(new JwtSecurityTokenHandler().WriteToken(token));
                     
-                return Ok(new LoginCTDO() { isLogged = true,UserName = login.LastName + " " + (login.Name), Role = login.UserRole.Description, Token = token} );
+                return Ok(new LoginCTDO() { isLogged = true,userName = login.LastName + " " + (login.Name), role = login.UserRole.Description, token = token} );
             }
         }
            
