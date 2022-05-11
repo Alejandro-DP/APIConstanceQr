@@ -35,7 +35,7 @@ namespace ValidaTecAPI.Controllers
             var isValidPassword = await context.Users.Include(u => u.UserRole).FirstOrDefaultAsync(x => x.Password == user.Password);/*BCrypt.Net.BCrypt.Verify(login.Password, user.Password);*/
             if (isValidPassword == null)
 
-                return BadRequest("crendenciales Incorrectas");
+                return BadRequest("usuario o contraseña incorrectos");
             else
             {
                 var userData = await GetUsers(user.Email, user.Password);
