@@ -25,7 +25,7 @@ builder.Services.AddSwaggerGen( c =>
         Name = "Athorization" ,
         In = ParameterLocation.Header ,
         Type = SecuritySchemeType.ApiKey ,
-        Scheme = "´Pruebas"
+        Scheme = "Pruebas"
     });
 
     c.AddSecurityRequirement(new OpenApiSecurityRequirement
