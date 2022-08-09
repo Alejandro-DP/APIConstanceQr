@@ -34,8 +34,8 @@ namespace ValidaTecAPI.Controllers
                 return NotFound();
             var isValidPassword = await context.Users.Include(u => u.UserRole).FirstOrDefaultAsync(x => x.Password == user.Password);/*BCrypt.Net.BCrypt.Verify(login.Password, user.Password);*/
             if (isValidPassword == null)
-                //return Ok(new ErrorsDTO() { status = "error", message = "usuario o contraseña incorrectos" });
-                return BadRequest("usuario o contraseña incorrectos");
+                return Ok(new ErrorsDTO() { status = "error", message = "usuario o contraseña incorrectos" });
+            //return BadRequest("usuario o contraseña incorrectos");
             else
             {
                 var userData = await GetUsers(user.Email, user.Password);
