@@ -34,15 +34,15 @@ namespace ValidaTecAPI.Controllers
                 return NotFound();
             var isValidPassword = await context.Users.Include(u => u.UserRole).FirstOrDefaultAsync(x => x.Password == user.Password);/*BCrypt.Net.BCrypt.Verify(login.Password, user.Password);*/
             if (isValidPassword == null)
-
+                //return Ok(new ErrorsDTO() { status = "error", message = "usuario o contraseña incorrectos" });
                 return BadRequest("usuario o contraseña incorrectos");
             else
             {
                 var userData = await GetUsers(user.Email, user.Password);
                 var jwt = _Configuration.GetSection("Jwt").Get<Jwt>();
-               
-                    var claims = new[]
-                    {
+
+                var claims = new[]
+                {
                         new Claim(JwtRegisteredClaimNames.Sub, jwt.Subject),
                         new Claim(JwtRegisteredClaimNames.Jti, Guid.NewGuid().ToString()),
                         new Claim(JwtRegisteredClaimNames.Iat, jwt.Subject),
@@ -51,20 +51,20 @@ namespace ValidaTecAPI.Controllers
                         new Claim("Password", user.Password),
 
                     };
-                    var key = new SymmetricSecurityKey(Encoding.UTF8.GetBytes(jwt.Key));
-                    var singIn = new SigningCredentials(key, SecurityAlgorithms.HmacSha256);
-                    var tokens = new JwtSecurityToken
-                             (
-                              jwt.Issuer,
-                              jwt.Audience,
-                              claims,
-                              expires: DateTime.Now.AddMinutes(20),
-                              signingCredentials: singIn
-                             );
+                var key = new SymmetricSecurityKey(Encoding.UTF8.GetBytes(jwt.Key));
+                var singIn = new SigningCredentials(key, SecurityAlgorithms.HmacSha256);
+                var tokens = new JwtSecurityToken
+                         (
+                          jwt.Issuer,
+                          jwt.Audience,
+                          claims,
+                          expires: DateTime.Now.AddMinutes(20),
+                          signingCredentials: singIn
+                         );
                 var token = new JwtSecurityTokenHandler().WriteToken(tokens);
-                    //return Ok(new JwtSecurityTokenHandler().WriteToken(token));
-                    
-                return Ok(new LoginCTDO() { status = "sucess",userName = login.LastName + " " + (login.Name), isAdmin  = true, token = token} );
+                //return Ok(new JwtSecurityTokenHandler().WriteToken(token));
+
+                return Ok(new LoginCTDO() { status = "sucess", userName = login.LastName + " " + (login.Name), isAdmin = true, token = token });
             }
         }
            
