@@ -31,10 +31,10 @@ namespace ValidaTecAPI.Controllers
         {
             var login = await context.Users.Include(x => x.UserRole).FirstOrDefaultAsync(u => u.Email == user.Email);
             if (login == null)
-                return NotFound();
+                return Ok(new ErrorsDTO() { status = "alert", message = "usuario o contraseña incorrectos" });
             var isValidPassword = await context.Users.Include(u => u.UserRole).FirstOrDefaultAsync(x => x.Password == user.Password);/*BCrypt.Net.BCrypt.Verify(login.Password, user.Password);*/
             if (isValidPassword == null)
-                return Ok(new ErrorsDTO() { status = "error", message = "usuario o contraseña incorrectos" });
+                return Ok(new ErrorsDTO() { status = "error", message = "Ocurrio algun problema intentelo mas tarde" });
             //return BadRequest("usuario o contraseña incorrectos");
             else
             {
